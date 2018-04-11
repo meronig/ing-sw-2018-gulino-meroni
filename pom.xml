@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>it.polimi.se2018</groupId>
-  <artifactId>sagrada</artifactId>
+  <artifactId>sagrada2</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <name>Sagrada</name>
@@ -13,11 +13,22 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Java version -->
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+
+    <!-- Integrating Sonar with Jacoco -->
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+    <sonar.language>java</sonar.language>
+
   </properties>
 
   <dependencies>
+
+    <!-- JUnit provides unit testing for Java applications -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -27,16 +38,9 @@
   </dependencies>
 
   <build>
-
-    <!-- Permette di connettere il progetto alla web-ui Sonar -->
     <plugins>
-      <plugin>
-        <groupId>org.sonarsource.scanner.maven</groupId>
-        <artifactId>sonar-maven-plugin</artifactId>
-        <version>3.4.0.905</version>
-      </plugin>
 
-      <!-- Permette di generare un JAR con mainClass App -->
+      <!-- Export the project as a runnable JAR, with the provided mainClass -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -47,6 +51,32 @@
             </manifest>
           </archive>
         </configuration>
+      </plugin>
+
+      <!-- Jacoco is a code coverage library that allows basic report creation -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.1</version>
+        <configuration>
+          <destFile>${sonar.jacoco.reportPath}</destFile>
+          <append>true</append>
+        </configuration>
+        <executions>
+          <execution>
+            <id>agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- SonarQube analysis on Maven projects -->
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.4.0.905</version>
       </plugin>
 
     </plugins>
